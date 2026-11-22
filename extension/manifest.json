@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "X 粉丝数 · X Pro 被动版",
-  "version": "1.2.6",
-  "description": "在 X 和 X Pro 显示页面已加载的粉丝数、关系和号龄。无额外请求、翻页或代点，趋势记录可在本机开启。",
+  "version": "1.2.8",
+  "description": "在 X 和 X Pro 显示页面已有的粉丝数、收藏/赞与转评数据。无额外请求、翻页或代点。",
   "minimum_chrome_version": "111",
   "icons": {
     "16": "icons/icon-16.png",
@@ -31,6 +31,7 @@
         "runtime.js",
         "history.js",
         "card.js",
+        "post-signals.js",
         "content.js"
       ],
       "css": [

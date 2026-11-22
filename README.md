@@ -1,6 +1,6 @@
 # X 粉丝数 · X Pro 被动版
 
-Chrome Manifest V3 扩展，在 X 和 X Pro 上显示页面已加载的粉丝数、关注关系和号龄。**1.2.6 本地版**基于 [vikyhuhu/x-follower-count](https://github.com/vikyhuhu/x-follower-count) 的 MIT 源码。扩展不发起 X 请求，也不代你点击、滚动或翻页。
+Chrome Manifest V3 扩展，在 X 和 X Pro 上显示页面已加载的粉丝数、关注关系和号龄。**1.2.8**基于 [vikyhuhu/x-follower-count](https://github.com/vikyhuhu/x-follower-count) 的 MIT 源码。扩展不发起 X 请求，也不代你点击、滚动或翻页。
 
 <img src="extension/icons/icon-128.png" alt="X 粉丝数：黑底白 X 与蓝色双人徽标" width="128" height="128">
 
@@ -8,7 +8,7 @@ Chrome Manifest V3 扩展，在 X 和 X Pro 上显示页面已加载的粉丝数
 
 **[下载最新版 ZIP](https://github.com/nykc2w55fv-boop/x-follower-count-x-pro/releases/latest/download/x-follower-count-x-pro.zip)** · [版本说明](https://github.com/nykc2w55fv-boop/x-follower-count-x-pro/releases/latest)
 
-本地构建输出为 `dist/x-follower-count-1.2.6.zip`。可直接加载项目的 `extension/`。重新打包可在 Windows 运行 `python scripts/package.py`，在 macOS 运行 `python3 scripts/package.py`。
+本地构建输出为 `dist/x-follower-count-1.2.8.zip`。可直接加载项目的 `extension/`。重新打包可在 Windows 运行 `python scripts/package.py`，在 macOS 运行 `python3 scripts/package.py`。
 
 ### 首次安装
 
@@ -26,7 +26,7 @@ Chrome Manifest V3 扩展，在 X 和 X Pro 上显示页面已加载的粉丝数
 1. 在 `chrome://extensions` 找到「X 粉丝数 · X Pro 被动版」，进入「详细信息」，确认当前加载的文件夹路径。
 2. 下载最新版安装包，先解压到临时文件夹。
 3. 将解压后的插件文件复制到**原来加载的文件夹**，覆盖对应文件。`manifest.json` 应仍位于原文件夹根目录，不要把新版文件夹整体套在里面。原文件夹名称即使带旧版本号，也无需改名。
-4. 回到扩展管理页，点击该插件的「重新加载」，确认版本为 **1.2.6** 或更新版本，再刷新 X 页面。
+4. 回到扩展管理页，点击该插件的「重新加载」，确认版本为 **1.2.8** 或更新版本，再刷新 X 页面。
 5. 打开曾有记录的账号详情卡，确认近7天趋势中的历史日期仍在。
 
 **不要先移除插件再安装，不要改为加载另一个文件夹，也不要点击「清除全部趋势记录」。** 更新时使用同一浏览器配置文件、原加载路径和原扩展 ID，已有趋势记录和设置会继续保留。
@@ -44,6 +44,16 @@ Chrome Manifest V3 扩展，在 X 和 X Pro 上显示页面已加载的粉丝数
 - **本机粉丝趋势**新安装默认关闭，可在工具栏主动开启。升级保留已有设置。记录已加载账号的粉丝快照；近七个北京时间自然日的每日最后一次观察值显示为柱状图，首个观察日靠左、数字直接显示，中间缺失日留空。柱高按该账号自身数值范围缩放，缩放时显示提示；至少有两天记录时，标题旁以小标签显示首末记录的净变化及相对首日的变化百分比（四舍五入保留两位小数），例如 `▲418（幅度1.71%）`；红色▲表示上涨，绿色▼表示下跌，方向只标记一次，持平使用中性色。起始值为零且发生增长时，百分比显示「—」。仅一天记录时说明趋势仍在积累；没有记录时只显示标题和空图。
 - 「含图片/视频的帖数」紧跟总发帖数，字段名称保持单行；计数后附媒体帖数占总发帖数的整数百分比，例如 `1,581（18%）`。总发帖数缺失或为零时不显示占比。
 - 动态加载、用户列表、节点复用、亮暗主题及窄屏布局。关系只针对当前登录账号，检测账号切换后清空页面缓存。
+
+## 1.2.8 更新
+
+打开工具栏弹窗，展开「刷帖速查」即可查看 Bangermeter 的 C/E 分和收藏/赞、转评标签怎么用。
+
+## 1.2.7 本地更新
+
+帖子操作栏下方显示两项指标。收藏数除以点赞数达到 30% 时标绿。转发不少于评论且有转发时标蓝，评论至少为转发的 3 倍、且不少于 3 条时标橙。其他有数据的情况显示灰色。帖子未显示所需计数，或点赞数为零时，对应指标留空。用缩写计数估算的结果标「约」。
+
+两个指标使用当前页面已经显示的数字，不读额外响应、不保存帖子数据。颜色便于筛选，是否值得拆解仍要看正文和回复。
 
 ## 1.2.6 本地更新
 
@@ -103,7 +113,7 @@ pnpm package
 
 上游 1.2.5 验证：31项 Node 测试和解压安装包的四套浏览器回归通过，覆盖媒体占比、涨跌／持平／零基数、完整卡片定位、粉关比标签、号龄配色、记录保留与较小存储配额。实际登录 X 已抽样确认占比、趋势、卡片及三档号龄配色；实际配额兼容由合成测试验证。
 
-打包命令生成 `dist/x-follower-count-1.2.6.zip`，供本地解压加载及 Chrome Web Store 上传共用。商店提交材料与后台填写说明见 [发布准备](docs/chrome-web-store.md)。
+打包命令生成 `dist/x-follower-count-1.2.8.zip`，供本地解压加载及 Chrome Web Store 上传共用。商店提交材料与后台填写说明见 [发布准备](docs/chrome-web-store.md)。
 
 ## 许可证
 
