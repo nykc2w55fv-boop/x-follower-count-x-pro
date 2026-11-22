@@ -68,9 +68,11 @@
       const pending = Reflect.apply(originalFetch, this, args);
       try {
         const url = typeof args[0] === "string" || args[0] instanceof URL ? String(args[0]) : args[0]?.url;
-        if (isApiUrl(url, location.href, args[1]?.method ?? args[0]?.method ?? "GET")) {
+        const method = args[1]?.method ?? args[0]?.method ?? "GET";
+        if (isApiUrl(url, location.href, method)) {
           pending.then(response => {
-            if (response.ok) return response.clone().json().then(payload => {
+            if (!response.ok || (response.url && !isApiUrl(response.url, location.href, method))) return;
+            return response.clone().json().then(payload => {
               if (requestEpoch === epoch) consume(payload);
             });
           }).catch(() => {});
@@ -97,6 +99,7 @@
       this.addEventListener("loadend", () => {
         try {
           if (requestEpoch !== epoch || this.status < 200 || this.status >= 300) return;
+          if (this.responseURL && !isApiUrl(this.responseURL, location.href, request.method)) return;
           if (this.responseType === "json") consume(this.response);
           else if (this.responseType === "" || this.responseType === "text") consume(JSON.parse(this.responseText));
         } catch {

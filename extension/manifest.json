@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "X 粉丝数",
-  "version": "1.2.5",
-  "description": "在 X 名字旁显示粉丝数、关系与账号年龄；统一详情卡展示账号数据和近七天趋势。记录仅保存在本机。",
+  "name": "X 粉丝数 · X Pro 被动版",
+  "version": "1.2.6",
+  "description": "在 X 和 X Pro 显示页面已加载的粉丝数、关系和号龄。无额外请求、翻页或代点，趋势记录可在本机开启。",
   "minimum_chrome_version": "111",
   "icons": {
     "16": "icons/icon-16.png",
@@ -11,7 +11,7 @@
     "128": "icons/icon-128.png"
   },
   "action": {
-    "default_title": "X 粉丝数",
+    "default_title": "X 粉丝数 · X Pro 被动版",
     "default_icon": {
       "16": "icons/icon-16.png",
       "32": "icons/icon-32.png"
@@ -23,6 +23,7 @@
       "matches": [
         "https://x.com/*",
         "https://www.x.com/*",
+        "https://pro.x.com/*",
         "https://twitter.com/*",
         "https://www.twitter.com/*"
       ],
@@ -42,6 +43,7 @@
       "matches": [
         "https://x.com/*",
         "https://www.x.com/*",
+        "https://pro.x.com/*",
         "https://twitter.com/*",
         "https://www.twitter.com/*"
       ],

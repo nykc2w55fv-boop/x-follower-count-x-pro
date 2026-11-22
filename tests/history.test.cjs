@@ -3,10 +3,11 @@ const assert = require("node:assert/strict");
 const fs = require("node:fs"), vm = require("node:vm"), path = require("node:path");
 const data = require("../extension/data.js"), h = require("../extension/history.js");
 const now = Date.parse("2026-10-10T06:00:00Z"), user = { userId: "123", screenName: "alice", name: "Alice", followersCount: 100, followingCount: 5, following: true, followedBy: true };
-test("fresh install enables every option, while explicit saved choices survive normalization",()=>{
-  const defaults={recording:true,verification:true,media:true,category:true,website:true};
+test("fresh install leaves trends off, while explicit saved choices survive normalization",()=>{
+  const defaults={recording:false,verification:true,media:true,category:true,website:true};
   assert.deepEqual(h.empty().settings,defaults);
   assert.deepEqual(h.settings(),defaults);
+  assert.equal(h.settings({recording:true}).recording,true);
   const disabled=Object.fromEntries(Object.keys(defaults).map(key=>[key,false]));
   assert.deepEqual(h.settings(disabled),disabled);
   const state=h.empty();state.settings=disabled;h.prune(state,now);
@@ -44,9 +45,11 @@ test("background defaults cannot be changed by pages; concurrent writes, restart
   let saved={},handler;
   const chrome={runtime:{id:"test",onMessage:{addListener:fn=>handler=fn}},storage:{local:{get:async key=>({[key]:structuredClone(saved[key])}),set:async value=>{await new Promise(r=>setTimeout(r,3));Object.assign(saved,structuredClone(value));},getBytesInUse:async()=>JSON.stringify(saved).length}}};
   const boot=()=>{const ctx=vm.createContext({chrome,Date,URL,__xfcData:data,__xfcHistory:h,importScripts:()=>{}});vm.runInContext(fs.readFileSync(path.resolve(__dirname,"../extension/background.js"),"utf8"),ctx);};
-  const send=(type,extra={},ui=false)=>new Promise(resolve=>handler({channel:"xfc-local",type,...extra},{id:"test",url:ui?"chrome-extension://test/popup.html":"https://x.com/home",tab:{id:1}},resolve));
-  boot();assert.equal((await send("status")).settings.recording,true);
-  assert.equal((await send("settings",{settings:{recording:false}})).ok,false);
+  const send=(type,extra={},ui=false)=>new Promise(resolve=>handler({channel:"xfc-local",type,...extra},{id:"test",url:ui?"chrome-extension://test/popup.html":"https://pro.x.com/i/decks/1",tab:{id:1}},resolve));
+  boot();assert.equal((await send("status")).settings.recording,false);
+  assert.equal((await send("settings",{settings:{recording:true}})).ok,false);
+  await send("observe",{users:[user]});assert.equal((await send("status")).users,0);
+  await send("settings",{settings:{recording:true}},true);
   await send("observe",{users:[user]});assert.equal(Object.keys(saved["xfc-history-v1"].users).length,1);
   await Promise.all([send("observe",{users:[user]}),send("observe",{users:[{...user,userId:"456",screenName:"bob"}]})]);
   assert.equal((await send("status")).users,2);boot();
@@ -107,6 +110,7 @@ test("expiry is written back while recording is disabled without restarting the 
 test("older Chrome quota bounds history during load and later observations",async()=>{
   const at=Date.now(),quota=5*1024*1024,budget=quota-512*1024;
   let saved=h.empty(),handler;
+  saved.settings.recording=true;
   const days={};
   for(let offset=0;offset<30;offset++) {
     const snapshot={at:at-offset*h.DAY,count:99999999};

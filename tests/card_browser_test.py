@@ -26,7 +26,9 @@ for offset, count in [(7,171000),(6,171400),(4,172000),(3,172100),(1,173800)]:
     record["days"][day(now - timedelta(days=offset))] = {"first": {"at": at, "count": count}, "last": {"at": at, "count": count}}
 seed = {"version": 1, "users": {"1": record}, "settings": {"recording": True, "verification": True, "media": True, "category": True, "website": True}}
 binaries = sorted((Path.home() / "Library/Caches/ms-playwright").glob("chromium-*/chrome-mac-arm64/*app/Contents/MacOS/*"))
-options = {"headless": True, "ignore_default_args": ["--disable-extensions"], "args": [f"--disable-extensions-except={EXTENSION}", f"--load-extension={EXTENSION}"], "viewport": {"width": 1280, "height": 960}, "executable_path": str(binaries[-1])}
+binary = os.environ.get("CHROMIUM_EXECUTABLE") or (str(binaries[-1]) if binaries else None)
+launch_options = {"executable_path": binary} if binary else {"channel": "chromium"}
+options = {"headless": True, "ignore_default_args": ["--disable-extensions"], "args": [f"--disable-extensions-except={EXTENSION}", f"--load-extension={EXTENSION}"], "viewport": {"width": 1280, "height": 960}, **launch_options}
 errors, failures, requests = [], [], []
 
 def setup(context):
@@ -134,7 +136,8 @@ with sync_playwright() as p, tempfile.TemporaryDirectory(prefix="xfc-card-") as 
     page.keyboard.press("Escape")
     page.set_viewport_size({"width":1280,"height":960})
     # Page refresh and browser restart preserve the daily follower history.
-    page.get_by_role("button", name="载入用户列表").click()
+    with page.expect_request_finished(lambda request: request.url.endswith("/Followers")):
+        page.get_by_role("button", name="载入用户列表").click()
     page.reload()
     page.get_by_role("button", name="载入时间线").click()
     badge.hover()
